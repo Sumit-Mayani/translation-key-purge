@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Sumit-Mayani/unused-json-files.git"
+    "url": "git+https://github.com/Sumit-Mayani/translation-key-purge.git"
   },
   "keywords": [
     "i18n",
@@ -25,12 +25,12 @@
   ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Sumit-Mayani/unused-json-files/issues"
+    "url": "https://github.com/Sumit-Mayani/translation-key-purge/issues"
   },
   "bin": {
     "translation-key-purge": "./index.js"
   },
-  "homepage": "https://github.com/Sumit-Mayani/unused-json-files#readme",
+  "homepage": "https://github.com/Sumit-Mayani/translation-key-purge#readme",
   "dependencies": {
     "fs": "^0.0.1-security",
     "glob": "^11.0.0",

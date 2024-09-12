@@ -1,4 +1,4 @@
-# translation-key-purge
+# Translation Key Purge
 
 A tool to automatically detect and remove unused translation keys from i18n files across multiple projects, helping maintain clean and efficient localization in React.js and Next.js.
 
