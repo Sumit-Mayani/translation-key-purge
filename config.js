@@ -5,6 +5,7 @@ const path = require("path");
 const DEFAULT_CONFIG = {
   functionName: "t",
   languageCode: "en",
+  searchPath: "src",
 };
 
 function readConfig() {

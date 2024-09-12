@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const fs = require("fs");
-const path = require("path");
 const glob = require("glob");
 const readline = require("readline");
 const { readConfig } = require("./config");
@@ -9,13 +8,18 @@ const { readConfig } = require("./config");
 const searchKeyInFile = (key, filePath) => {
   const config = readConfig();
   const fileContent = fs.readFileSync(filePath, "utf8");
-  const regex = new RegExp(`\\b${config.functionName}\\(["'\`]${key}["'\`]\\)`, 'g');
+  const regex = new RegExp(
+    `\\b${config.functionName}\\(["'\`]${key}["'\`]\\)`,
+    "g"
+  );
   return regex.test(fileContent);
 };
 
 // Function to find the JSON file with the language code
-const findJsonFile = (languageCode) => {
-  const files = glob.sync(`**/${languageCode}.json`, { absolute: true });
+const findJsonFile = (languageCode, directory) => {
+  const files = glob.sync(`${directory}/${languageCode}.json`, {
+    absolute: true,
+  });
   if (files.length === 0) {
     throw new Error(`No JSON file found for language code: ${languageCode}`);
   }
@@ -25,8 +29,12 @@ const findJsonFile = (languageCode) => {
 // Function to find unused keys
 const findUnusedKeys = () => {
   const config = readConfig();
-  const allFiles = glob.sync("**/*.{js,jsx,ts,tsx}", { absolute: true });
-  const enJsonPath = findJsonFile(config.languageCode);
+  const allFiles = glob.sync(`**/*.{js,jsx,ts,tsx}`, {
+    absolute: true,
+    ignore: "**/node_modules/**",
+  });
+  const enJsonPath = findJsonFile(config.languageCode, config.searchPath);
+  console.log(`Found JSON file at: ${enJsonPath}`);
   const enJson = JSON.parse(fs.readFileSync(enJsonPath, "utf8"));
   const translationKeys = Object.keys(enJson);
   const unusedKeys = [];
@@ -44,7 +52,7 @@ const findUnusedKeys = () => {
 // Function to remove unused keys from the JSON file
 const removeUnusedKeys = (unusedKeys) => {
   const config = readConfig();
-  const enJsonPath = findJsonFile(config.languageCode);
+  const enJsonPath = findJsonFile(config.languageCode, config.searchPath);
   const enJson = JSON.parse(fs.readFileSync(enJsonPath, "utf8"));
 
   unusedKeys.forEach((key) => {
@@ -65,7 +73,7 @@ if (unusedKeys.length > 0) {
     input: process.stdin,
     output: process.stdout,
   });
-    const config = readConfig();
+  const config = readConfig();
 
   rl.question(
     `Do you want to remove the unused keys from ${config.languageCode}.json? (yes/no): `,
