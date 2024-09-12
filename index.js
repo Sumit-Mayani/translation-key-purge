@@ -9,10 +9,7 @@ const { readConfig } = require("./config");
 const searchKeyInFile = (key, filePath) => {
   const config = readConfig();
   const fileContent = fs.readFileSync(filePath, "utf8");
-  const regex = new RegExp(
-    `${config.functionName}\\(["'\`]${key}["'\`]\\)`,
-    "g"
-  );
+  const regex = new RegExp(`\\b${config.functionName}\\(["'\`]${key}["'\`]\\)`, 'g');
   return regex.test(fileContent);
 };
 
@@ -28,7 +25,7 @@ const findJsonFile = (languageCode) => {
 // Function to find unused keys
 const findUnusedKeys = () => {
   const config = readConfig();
-  const allFiles = glob.sync("src/**/*.{js,jsx,ts,tsx}", { absolute: true });
+  const allFiles = glob.sync("**/*.{js,jsx,ts,tsx}", { absolute: true });
   const enJsonPath = findJsonFile(config.languageCode);
   const enJson = JSON.parse(fs.readFileSync(enJsonPath, "utf8"));
   const translationKeys = Object.keys(enJson);
