@@ -29,13 +29,16 @@ Create a `sumit.config.json` file in the root of your project to customize the b
 ```json
 {
   "functionName": "t",
-  "languageCode": "en"
+  "languageCode": "en",
+  "searchPath": "src"
 }
 ```
 
 - `functionName`: The function name used for translation keys in your code `(default: t)`.
 
 - `languageCode`: The language code for the JSON file to check `(default: en)`.
+
+- `searchPath`: The searchPath for the JSON file source folder path to check `(default: src)`.
 
 ## Usage
 

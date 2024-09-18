@@ -1,6 +1,6 @@
 {
   "name": "translation-key-purge",
-  "version": "1.0.4",
+  "version": "1.0.7",
   "description": "A tool to automatically detect and remove unused translation keys from i18n files across multiple projects, helping maintain clean and efficient localization in React.js and Next.js",
   "main": "index.js",
   "author": "Sumit Mayani",
@@ -19,6 +19,7 @@
     "cleanup",
     "i18n-prune",
     "translation-cleaner",
+    "translation-key-purge",
     "internationalization",
     "key-remover",
     "translation-maintenance"

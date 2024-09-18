@@ -63,11 +63,9 @@ const removeUnusedKeys = (unusedKeys) => {
   console.log(`Unused keys removed from ${config.languageCode}.json`);
 };
 
-// Find and log unused keys
 const unusedKeys = findUnusedKeys();
 console.log("Unused Translation Keys:", unusedKeys);
 
-// If there are unused keys, prompt the user to remove them
 if (unusedKeys.length > 0) {
   const rl = readline.createInterface({
     input: process.stdin,
@@ -76,14 +74,24 @@ if (unusedKeys.length > 0) {
   const config = readConfig();
 
   rl.question(
-    `Do you want to remove the unused keys from ${config.languageCode}.json? (yes/no): `,
-    (answer) => {
-      if (answer.toLowerCase() === "yes") {
-        removeUnusedKeys(unusedKeys);
-      } else {
-        console.log(`No changes made to ${config.languageCode}.json`);
-      }
-      rl.close();
+    `Enter the keys you want to exclude from removal (comma-separated): `,
+    (excludeKeysInput) => {
+      const excludeKeys = excludeKeysInput.split(',').map(key => key.trim());
+      const keysToRemove = unusedKeys.filter(key => !excludeKeys.includes(key));
+
+      console.log("Keys to be removed:", keysToRemove);
+
+      rl.question(
+        `Do you want to remove the unused keys from ${config.languageCode}.json? (yes/no): `,
+        (answer) => {
+          if (answer.toLowerCase() === "yes" || answer.toLowerCase() === "y") {
+            removeUnusedKeys(keysToRemove);
+          } else {
+            console.log(`No changes made to ${config.languageCode}.json`);
+          }
+          rl.close();
+        }
+      );
     }
   );
 } else {
