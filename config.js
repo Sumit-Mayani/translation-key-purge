@@ -9,7 +9,7 @@ const DEFAULT_CONFIG = {
 };
 
 function readConfig() {
-  const configPath = path.join(process.cwd(), "sumit.config.json");
+  const configPath = path.join(process.cwd(), "sumit.jsconfig.json");
 
   try {
     let configData = fs.readFileSync(configPath, "utf8");

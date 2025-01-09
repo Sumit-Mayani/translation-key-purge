@@ -24,7 +24,7 @@ yarn add translation-key-purge
 
 ## Configuration
 
-Create a `sumit.config.json` file in the root of your project to customize the behavior of the package.
+Create a `sumit.jsconfig.json` file in the root of your project to customize the behavior of the package.
 
 ```json
 {
@@ -42,7 +42,7 @@ Create a `sumit.config.json` file in the root of your project to customize the b
 
 ## Usage
 
-1. Create a `sumit.config.json` file in the root of your project with the desired configuration.
+1. Create a `sumit.jsconfig.json` file in the root of your project with the desired configuration.
 
 2. Add the following script to your `package.json`:
 
