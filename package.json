@@ -4,7 +4,7 @@
   "description": "A tool to automatically detect and remove unused translation keys from i18n files across multiple projects, helping maintain clean and efficient localization in React.js and Next.js",
   "main": "index.js",
   "author": "Sumit Mayani",
-  "icon": "https://raw.githubusercontent.com/Sumit-Mayani/translation-key-purge/master/jsconfig.svg",
+  "icon": "https://github.com/Sumit-Mayani/translation-key-purge/blob/master/jsconfig.svg",
   "scripts": {
     "start": "node index.js"
   },
