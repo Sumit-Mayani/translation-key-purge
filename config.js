@@ -1,28 +1,48 @@
-#!/usr/bin/env node
-const fs = require("fs");
-const path = require("path");
+/**
+ * Configuration options for the JSON key checker
+ * @typedef {Object} Config
+ * @property {string} srcDir - Directory to scan for source files
+ * @property {string[]} jsonPaths - Paths to JSON files to check
+ * @property {string[]} searchPaths - Paths to search for key usage
+ * @property {string[]} fileExtensions - File extensions to scan
+ * @property {boolean} recursive - Whether to scan directories recursively
+ * @property {string[]} translationFunctions - Translation function names to check
+ */
 
-const DEFAULT_CONFIG = {
-  functionName: "t",
-  languageCode: "en",
-  searchPath: "src",
+/**
+ * Default configuration
+ * @type {Config}
+ */
+const defaultConfig = {
+  srcDir: "src",
+  jsonPaths: ["src/**/*.json"],
+  searchPaths: ["src/**/*.{js,jsx,ts,tsx}"],
+  fileExtensions: [".js", ".jsx", ".ts", ".tsx"],
+  recursive: true,
+  translationFunctions: ["t", "i18n", "translate"],
 };
 
-function readConfig() {
-  const configPath = path.join(process.cwd(), "sumit.jsconfig.json");
-
+/**
+ * Reads and merges configuration from file
+ * @param {string} [configPath="./translation-key-purge.config.json"] - Path to config file
+ * @returns {Promise<Config>} Merged configuration
+ */
+async function readConfig(configPath = "./translation-key-purge.config.json") {
   try {
-    let configData = fs.readFileSync(configPath, "utf8");
-    configData = JSON.parse(configData);
-    if (configData) {
-      configData = { DEFAULT_CONFIG, ...configData };
+    const fs = require("fs").promises;
+    const content = await fs.readFile(configPath, "utf8");
+    const userConfig = JSON.parse(content);
+    return { ...defaultConfig, ...userConfig };
+  } catch (error) {
+    // If config file doesn't exist, return default config
+    if (error.code === "ENOENT") {
+      return defaultConfig;
     }
-    return configData;
-  } catch (err) {
-    console.error("Error reading config file:", err.message);
-    console.log("Using default config.");
-    return DEFAULT_CONFIG;
+    throw error;
   }
 }
 
-module.exports = { readConfig };
+module.exports = {
+  readConfig,
+  defaultConfig,
+};
