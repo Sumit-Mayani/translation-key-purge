@@ -1,39 +1,43 @@
 {
   "name": "translation-key-purge",
-  "version": "1.0.10",
-  "description": "A tool to automatically detect and remove unused translation keys from i18n files across multiple projects, helping maintain clean and efficient localization in React.js and Next.js",
+  "version": "1.0.12",
+  "description": "A tool to check and manage translation keys in JSON files",
   "main": "index.js",
   "author": "Sumit Mayani",
   "icon": "https://github.com/Sumit-Mayani/translation-key-purge/blob/master/jsconfig.svg",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "check-translations": "node index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Sumit-Mayani/translation-key-purge.git"
+    "url": "https://github.com/sumitmayani/translation-key-purge"
   },
   "keywords": [
-    "i18n",
     "translation",
-    "localization",
-    "unused-keys",
-    "cleanup",
-    "i18n-prune",
-    "translation-cleaner",
-    "translation-key-purge",
-    "internationalization",
-    "key-remover",
-    "translation-maintenance"
+    "i18n",
+    "json",
+    "key-checker",
+    "internationalization"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Sumit-Mayani/translation-key-purge/issues"
+    "url": "https://github.com/sumitmayani/translation-key-purge/issues"
   },
   "bin": {
     "translation-key-purge": "./index.js"
   },
-  "homepage": "https://github.com/Sumit-Mayani/translation-key-purge#readme",
+  "homepage": "https://github.com/sumitmayani/translation-key-purge#readme",
   "dependencies": {
     "glob": "^10.3.10"
-  }
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "index.js",
+    "config.js",
+    "README.md",
+    "LICENSE"
+  ]
 }

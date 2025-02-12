@@ -32,7 +32,7 @@ yarn add translation-key-purge
 
 ## Configuration
 
-Create a `translation-key-purge.config.json` file in your project root:
+Create a `sumit.config.json` file in your project root:
 
 ```json
 {

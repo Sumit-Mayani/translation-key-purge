@@ -4,5 +4,5 @@
   "searchPaths": ["src/**/*.{js,jsx,ts,tsx}"],
   "fileExtensions": [".js", ".jsx", ".ts", ".tsx"],
   "recursive": true,
-  "translationFunctions": ["t", "i18n", "translate", "the"]
+  "translationFunctions": ["t", "i18n", "translate"]
 }

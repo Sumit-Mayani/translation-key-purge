@@ -601,7 +601,8 @@ async function handleAddTranslations(checker) {
  */
 async function main() {
   try {
-    const config = await readConfig();
+    // Pass the custom config file name
+    const config = await readConfig("./sumit.config.json");
     const checker = new JsonKeyChecker(config);
 
     while (true) {

@@ -24,10 +24,10 @@ const defaultConfig = {
 
 /**
  * Reads and merges configuration from file
- * @param {string} [configPath="./translation-key-purge.config.json"] - Path to config file
+ * @param {string} [configPath="./sumit.config.json"] - Path to config file
  * @returns {Promise<Config>} Merged configuration
  */
-async function readConfig(configPath = "./translation-key-purge.config.json") {
+async function readConfig(configPath = "./sumit.config.json") {
   try {
     const fs = require("fs").promises;
     const content = await fs.readFile(configPath, "utf8");
