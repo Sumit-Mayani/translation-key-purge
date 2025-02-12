@@ -48,12 +48,21 @@ class JsonKeyChecker {
       recursive: this.config.recursive,
     });
 
+    if (DEBUG) console.log("Found JSON files:", files);
+
     for (const filePath of files) {
       const content = await fs.readFile(filePath, "utf8");
       const jsonData = JSON.parse(content);
 
+      if (DEBUG) console.log(`Scanning JSON file: ${filePath}`);
+
       // Extract both keys and values
       this.extractJsonData(jsonData, "", filePath);
+    }
+
+    if (DEBUG) {
+      console.log("\nCollected JSON keys:", Array.from(this.jsonKeys.keys()));
+      console.log("\nCollected JSON values:", Array.from(this.jsonValues));
     }
   }
 
@@ -92,79 +101,79 @@ class JsonKeyChecker {
   /**
    * Extracts text content from JSX/TSX elements
    * @param {string} content - File content
+   * @param {string} searchType - Type of search (1 for keys only, 2 for values)
    * @returns {string[]} Array of text content
    */
-  extractTextContent(content) {
-    const texts = [];
+  extractTextContent(content, searchType) {
+    const texts = new Set();
 
     try {
-      // 1. Match array strings - improved regex
-      const arrayStringRegex =
-        /\[\s*(["'][^"']*["']\s*(?:,\s*["'][^"']*["']\s*)*)\]/g;
-      let match;
-      while ((match = arrayStringRegex.exec(content)) !== null) {
-        const arrayContent = match[1];
-        const stringMatches = arrayContent.match(/["']([^"']+)["']/g) || [];
-        stringMatches.forEach((str) => {
-          // Remove quotes and trim
-          const cleanStr = str.replace(/^["']|["']$/g, "").trim();
-          if (cleanStr) texts.push(cleanStr);
-        });
-      }
-
-      // 2. Match object string values - improved regex
-      const objectValueRegex = /:\s*["']([^"']+)["']/g;
-      while ((match = objectValueRegex.exec(content)) !== null) {
-        const text = match[1].trim();
-        if (text) texts.push(text);
-      }
-
-      // 3. Match template literals - improved regex
-      const templateLiteralRegex = /`([^`]+)`/g;
-      while ((match = templateLiteralRegex.exec(content)) !== null) {
-        const text = match[1].trim();
-        if (text) texts.push(text);
-      }
-
-      // 4. Match JSX text content
-      const jsxTextRegex = />([^<>{}]+)</g;
-      while ((match = jsxTextRegex.exec(content)) !== null) {
-        const text = match[1].trim();
-        if (text && !text.startsWith("{") && !text.endsWith("}")) {
-          texts.push(text);
+      if (searchType === "1") {
+        // Search for translation keys only
+        for (const funcName of this.translationFunctions) {
+          const translationRegex = new RegExp(
+            `${funcName}\\s*\\(\\s*["']([^"']+)["']\\s*\\)`,
+            "g"
+          );
+          let match;
+          while ((match = translationRegex.exec(content)) !== null) {
+            const key = match[1].trim();
+            if (key) {
+              if (DEBUG) console.log(`Found translation key: "${key}"`);
+              texts.add(`__KEY__:${key}`);
+            }
+          }
         }
-      }
+      } else if (searchType === "2") {
+        // Search for text values in arrays, objects, and template literals
+        // 1. Match array strings
+        const arrayStringRegex =
+          /\[\s*(["'][^"']*["']\s*(?:,\s*["'][^"']*["']\s*)*)\]/g;
+        let match;
+        while ((match = arrayStringRegex.exec(content)) !== null) {
+          const arrayContent = match[1];
+          const stringMatches = arrayContent.match(/["']([^"']+)["']/g) || [];
+          stringMatches.forEach((str) => {
+            const cleanStr = str.replace(/^["']|["']$/g, "").trim();
+            if (cleanStr) texts.add(cleanStr);
+          });
+        }
 
-      // 5. Match translation function calls
-      for (const funcName of this.translationFunctions) {
-        const translationRegex = new RegExp(
-          `${funcName}\\s*\\(\\s*["']([^"']+)["']\\s*\\)`,
-          "g"
-        );
-        while ((match = translationRegex.exec(content)) !== null) {
+        // 2. Match object string values
+        const objectValueRegex = /:\s*["']([^"']+)["']/g;
+        while ((match = objectValueRegex.exec(content)) !== null) {
           const text = match[1].trim();
-          if (text) texts.push(text);
+          if (text) texts.add(text);
+        }
+
+        // 3. Match template literals
+        const templateLiteralRegex = /`([^`]+)`/g;
+        while ((match = templateLiteralRegex.exec(content)) !== null) {
+          const text = match[1].trim();
+          if (text) texts.add(text);
         }
       }
 
-      // Debug logging
-      if (texts.length > 0) {
-        console.log("\nExtracted texts from file:");
+      if (DEBUG) {
+        console.log(
+          `\nExtracted ${searchType === "1" ? "keys" : "values"} from file:`
+        );
         texts.forEach((text) => console.log(`- "${text}"`));
       }
 
-      return [...new Set(texts)]; // Remove duplicates
+      return Array.from(texts);
     } catch (error) {
       console.error("Error extracting text content:", error);
-      return texts;
+      return Array.from(texts);
     }
   }
 
   /**
    * Scans source files for text content
    * @param {string} dir - Directory to scan
+   * @param {string} searchType - Type of search (1 for keys only, 2 for values)
    */
-  async scanSourceFiles(dir) {
+  async scanSourceFiles(dir, searchType) {
     const files = await glob(this.config.searchPaths, {
       ignore: "node_modules/**",
       recursive: this.config.recursive,
@@ -172,51 +181,60 @@ class JsonKeyChecker {
 
     for (const filePath of files) {
       const content = await fs.readFile(filePath, "utf8");
-
-      // Check for key usage
-      this.checkKeyUsage(content, filePath);
-
-      // Check for untranslated text
-      const textContent = this.extractTextContent(content);
-      this.checkUntranslatedText(textContent, filePath);
+      const textContent = this.extractTextContent(content, searchType);
+      this.checkUntranslatedText(textContent, filePath, searchType);
     }
   }
 
   /**
-   * Checks if text content exists in JSON values
+   * Checks if text content exists in JSON values or keys
    * @param {string[]} texts - Array of text content
    * @param {string} filePath - Source file path
+   * @param {string} searchType - Type of search (1 for keys only, 2 for values)
    */
-  checkUntranslatedText(texts, filePath) {
+  checkUntranslatedText(texts, filePath, searchType) {
     texts.forEach((text) => {
-      const normalizedText = text.toLowerCase().trim();
+      if (searchType === "1") {
+        // Check translation keys only
+        if (text.startsWith("__KEY__:")) {
+          const key = text.replace("__KEY__:", "");
+          if (DEBUG) console.log(`Checking translation key: "${key}"`);
 
-      // Skip if text is empty, single character, or just numbers
-      if (
-        !normalizedText ||
-        normalizedText.length <= 1 ||
-        /^\d+$/.test(normalizedText)
-      ) {
-        return;
-      }
+          const keyExists = Array.from(this.jsonKeys.keys()).some(
+            (jsonKey) => jsonKey === key
+          );
 
-      // Check if text exists as a value in JSON files
-      const existsInJson = Array.from(this.jsonValues).some(
-        (jsonValue) => jsonValue.toLowerCase().trim() === normalizedText
-      );
+          if (DEBUG) console.log(`Key exists in JSON: ${keyExists}`);
 
-      // Only add to unmatchedText if it doesn't exist in JSON
-      if (!existsInJson) {
-        if (!this.unmatchedText.has(text)) {
-          this.unmatchedText.set(text, new Set());
+          if (!keyExists) {
+            if (!this.unmatchedText.has(key)) {
+              this.unmatchedText.set(key, new Set());
+            }
+            this.unmatchedText.get(key).add(filePath);
+          }
         }
-        this.unmatchedText.get(text).add(filePath);
-      }
+      } else if (searchType === "2") {
+        // Check text values
+        const normalizedText = text.toLowerCase().trim();
 
-      if (DEBUG) {
-        console.log(`Checking text: "${text}"`);
-        console.log(`Exists in JSON: ${existsInJson}`);
-        console.log(`JSON values:`, Array.from(this.jsonValues));
+        if (
+          !normalizedText ||
+          normalizedText.length <= 1 ||
+          /^\d+$/.test(normalizedText)
+        ) {
+          return;
+        }
+
+        const existsInJson = Array.from(this.jsonValues).some(
+          (jsonValue) => jsonValue.toLowerCase().trim() === normalizedText
+        );
+
+        if (!existsInJson) {
+          if (!this.unmatchedText.has(text)) {
+            this.unmatchedText.set(text, new Set());
+          }
+          this.unmatchedText.get(text).add(filePath);
+        }
       }
     });
   }
@@ -307,7 +325,7 @@ class JsonKeyChecker {
 async function handleJsonCleanup(checker) {
   console.log("\nScanning JSON files for unused keys...");
   await checker.scanJsonFiles(checker.config.srcDir);
-  await checker.scanSourceFiles(checker.config.srcDir);
+  await checker.scanSourceFiles(checker.config.srcDir, "1");
 
   const report = checker.generateReport();
 
@@ -354,7 +372,7 @@ async function handleJsonCleanup(checker) {
 async function handleUntranslatedCheck(checker) {
   console.log("\nScanning files for untranslated text...");
   await checker.scanJsonFiles(checker.config.srcDir);
-  await checker.scanSourceFiles(checker.config.srcDir);
+  await checker.scanSourceFiles(checker.config.srcDir, "1");
 
   const report = checker.generateReport();
 
@@ -405,7 +423,18 @@ async function showMenu() {
  * @param {JsonKeyChecker} checker - Instance of JsonKeyChecker
  */
 async function handleAddTranslations(checker) {
-  console.log("\nScanning files for untranslated text...");
+  console.log("\nSelect search type:");
+  console.log("1. Search by translation keys only (e.g., t('key'))");
+  console.log("2. Search by text values (arrays, objects, template literals)");
+
+  const searchType = await question("\nSelect an option (1-2): ");
+
+  if (searchType !== "1" && searchType !== "2") {
+    console.log("Invalid option selected.");
+    return;
+  }
+
+  console.log("\nScanning files...");
 
   // Clear previous scans
   checker.jsonKeys.clear();
@@ -413,7 +442,7 @@ async function handleAddTranslations(checker) {
   checker.unmatchedText.clear();
 
   await checker.scanJsonFiles(checker.config.srcDir);
-  await checker.scanSourceFiles(checker.config.srcDir);
+  await checker.scanSourceFiles(checker.config.srcDir, searchType);
 
   const report = checker.generateReport();
   const { hardcoded, missingTranslations } = report.untranslatedText;
