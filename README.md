@@ -1,135 +1,62 @@
-# Translation Key Purge
+<div align="center">
 
-A tool to automatically detect and remove unused translation keys from i18n files across multiple projects, helping maintain clean and efficient localization in React.js and Next.js.
+<!-- ===== PROJECT BANNER ===== -->
+![Banner](https://img.shields.io/badge/translation_key_purge-Project-6C63FF?style=for-the-badge)
 
-## Features
+### Translation key purge
 
-- Detect unused translation keys in your project
-- Remove unused translation keys from JSON files
-- Find untranslated text in your source files
-- Support for:
-  - Array strings
-  - Object values
-  - Template literals (backtick strings)
-  - JSX text content
-  - Translation function calls
-- Supports React.js and Next.js projects
-- Interactive CLI interface
+[![Live Demo](https://img.shields.io/badge/Live_Demo-View_Site-success?style=for-the-badge&logo=netlify&logoColor=white)](https://sumit-mayani.github.io/translation-key-purge)
 
-## Installation
+<div align="left">
 
-You can install the package using [npm](https://docs.npmjs.com/cli/v8/commands/npm-install):
+<!-- ===== SCREENSHOTS ===== -->
+### 📸 Screenshots
+![Screenshot Placeholder](https://via.placeholder.com/800x400.png?text=Project+Screenshot)
 
+<!-- ===== TECH STACK ===== -->
+### 🛠️ Tech Stack Used
+![JavaScript](https://img.shields.io/badge/JavaScript-Color?style=for-the-badge&logo=javascript&logoColor=white)
+
+<!-- ===== FEATURES ===== -->
+### ✨ Features
+- ⚡ Fast and responsive design
+- 📱 Mobile-first approach
+- 🎨 Modern and clean UI
+- 🔒 Secure and optimized
+- 🌐 Cross-browser compatible
+
+<!-- ===== INSTALLATION ===== -->
+### 🚀 Installation Steps
+
+1. Clone the repository
 ```bash
-npm install translation-key-purge
+git clone https://github.com/Sumit-Mayani/translation-key-purge.git
 ```
-
-Or using yarn:
-
+2. Navigate to the directory
 ```bash
-yarn add translation-key-purge
+cd translation-key-purge
 ```
-
-## Configuration
-
-Create a `sumit.config.json` file in your project root:
-
-```json
-{
-  "srcDir": "src",
-  "jsonPaths": ["src/**/*.json"],
-  "searchPaths": ["src/**/*.{js,jsx,ts,tsx}"],
-  "fileExtensions": [".js", ".jsx", ".ts", ".tsx"],
-  "recursive": true,
-  "translationFunctions": ["t", "i18n", "translate"]
-}
-```
-
-### Configuration Options
-
-- `srcDir`: Base directory for scanning (default: "src")
-- `jsonPaths`: Glob patterns for JSON files to check
-- `searchPaths`: Glob patterns for source files to scan
-- `fileExtensions`: File extensions to process
-- `recursive`: Whether to scan subdirectories
-- `translationFunctions`: Translation function names to detect
-
-## Usage
-
-1. Add the script to your `package.json`:
-
-```json
-{
-  "scripts": {
-    "check-translations": "translation-key-purge"
-  }
-}
-```
-
-2. Run the tool:
-
+3. Install dependencies
 ```bash
-npm run check-translations
+npm install
+```
+4. Start the development server
+```bash
+npm run dev
 ```
 
-3. Choose from the available options:
-   - Check and clean unused JSON keys
-   - Check for untranslated text in files
-   - Check and add missing translations to JSON
-   - Exit
+<!-- ===== USAGE ===== -->
+### 📖 Usage
+After starting the development server, open `http://localhost:3000` in your browser. You can start editing the source files, and the browser will auto-update.
 
-### Features in Detail
-
-#### 1. Clean Unused Keys
-
-- Scans JSON files for unused translation keys
-- Interactive prompts to delete unused keys
-- Safe deletion with confirmation
-
-#### 2. Find Untranslated Text
-
-- Detects hardcoded text in:
-  - JSX content
-  - Array strings
-  - Object values
-  - Template literals
-- Shows file locations for each instance
-
-#### 3. Add Missing Translations
-
-- Interactive workflow to add translations
-- Supports nested JSON structures
-- Multiple JSON file support
-
-## Examples
-
-### Detecting Untranslated Text
-
-The tool will detect text in various formats:
-
-```jsx
-const Component = () => {
-  const array = ["Text 1", "Text 2"]; // ✓ Detected
-  const obj = { key: "Text 3" }; // ✓ Detected
-  const text = `Text 4`; // ✓ Detected
-
-  return (
-    <div>
-      Hardcoded text {/* ✓ Detected */}
-      {t("translated.key")} {/* ✓ Checked against JSON */}
-    </div>
-  );
-};
-```
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-## Author
-
-Sumit Mayani
-
-## Contributing
-
+<!-- ===== CONTRIBUTING ===== -->
+### 🤝 Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+<!-- ===== LICENSE ===== -->
+### 📜 License
+![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+This project is licensed under the MIT License.
+
+</div>
+</div>
